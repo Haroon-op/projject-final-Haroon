@@ -3,19 +3,28 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from .models import Product
 from .serializers import ProductSerializer
 
-
-
+# POST API
 class ProductAPI(APIView):
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.error)
+        return Response(serializer.errors)  # corrected .error -> .errors
+
+# GET API
+class ProductGetAPI(APIView):
+    def get(self, request):
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
     
+
+
+
     
 
 
